@@ -14,4 +14,20 @@
 #define BITMAP_DEPTH 0x1C
 #define BITMAP_SIZE_RAW 0x22
 
+#define BMP_TYPE 0x4D42
 
+
+#define HEADER_SIZE 0x0E
+#define INFO_SIZE 0x28
+
+
+#define DEFAULT_DEPTH 0x18 // 24
+
+
+typedef struct {
+    uint16_t type;
+    uint32_t size;
+    uint16_t reserved1;
+    uint16_t reserved2;
+    uint32_t offset;
+} t_bmp_header;
