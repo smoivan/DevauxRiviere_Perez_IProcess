@@ -191,3 +191,48 @@ void bmp8_threshold(t_bmp8 *img, int threshold) {
         img->data[i] = (img->data[i] >= threshold) ? 255 : 0;
     }
 }
+
+
+
+
+
+void bmp8_applyFilter(t_bmp8 *img, float **kernel, int kernelSize) {
+    if (img == NULL || img->data == NULL || kernel == NULL) {
+        printf("Erreur: Paramètres invalides\n");
+        return;
+    }
+
+    unsigned char *tempData = (unsigned char *)malloc(img->dataSize * sizeof(unsigned char));
+    if (tempData == NULL) {
+        printf("Erreur: Allocation mémoire échouée\n");
+        return;
+    }
+
+    memcpy(tempData, img->data, img->dataSize * sizeof(unsigned char));
+
+    int n = kernelSize / 2;
+
+    for (unsigned int y = n; y < img->height - n; y++) {
+        for (unsigned int x = n; x < img->width - n; x++) {
+            float sum = 0.0f;
+
+            for (int j = -n; j <= n; j++) {
+                for (int i = -n; i <= n; i++) {
+                    unsigned int pixelPos = (y + j) * img->width + (x + i);
+                    sum += img->data[pixelPos] * kernel[j + n][i + n];
+                }
+            }
+
+            if (sum > 255) {
+                sum = 255;
+            } else if (sum < 0) {
+                sum = 0;
+            }
+
+            tempData[y * img->width + x] = (unsigned char)sum;
+        }
+    }
+
+    free(img->data);
+    img->data = tempData;
+}
