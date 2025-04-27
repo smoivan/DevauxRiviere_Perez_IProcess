@@ -84,3 +84,52 @@ void bmp24_free(t_bmp24 *img) {
 
     free(img);
 }
+
+void bmp24_readPixelValue(t_bmp24 *image, int x, int y, FILE *file) {
+
+    uint32_t position = image->header.offset + ((image->height - 1 - y) * image->width + x) * 3;
+
+
+    uint8_t bgr[3];
+    file_rawRead(position, bgr, sizeof(uint8_t), 3, file);
+
+
+    image->data[y][x].blue = bgr[0];
+    image->data[y][x].green = bgr[1];
+    image->data[y][x].red = bgr[2];
+}
+
+
+ */
+void bmp24_readPixelData(t_bmp24 *image, FILE *file) {
+    for (int y = 0; y < image->height; y++) {
+        for (int x = 0; x < image->width; x++) {
+            bmp24_readPixelValue(image, x, y, file);
+        }
+    }
+}
+
+
+ */
+void bmp24_writePixelValue(t_bmp24 *image, int x, int y, FILE *file) {
+
+    uint32_t position = image->header.offset + ((image->height - 1 - y) * image->width + x) * 3;
+
+
+    uint8_t bgr[3];
+    bgr[0] = image->data[y][x].blue;
+    bgr[1] = image->data[y][x].green;
+    bgr[2] = image->data[y][x].red;
+
+    file_rawWrite(position, bgr, sizeof(uint8_t), 3, file);
+}
+
+
+
+void bmp24_writePixelData(t_bmp24 *image, FILE *file) {
+    for (int y = 0; y < image->height; y++) {
+        for (int x = 0; x < image->width; x++) {
+            bmp24_writePixelValue(image, x, y, file);
+        }
+    }
+}
