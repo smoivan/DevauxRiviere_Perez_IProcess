@@ -37,3 +37,37 @@ t_bmp8 *bmp8_loadImage(const char *filename) {
     img->colorDepth = *(unsigned short *)&img->header[28];
     img->dataSize = *(unsigned int *)&img->header[34];
 
+    if (img->colorDepth != 8) {
+        printf("Erreur: L'image n'est pas en 8 bits\n");
+        free(img);
+        fclose(file);
+        return NULL;
+    }
+
+    if (fread(img->colorTable, sizeof(unsigned char), 1024, file) != 1024) {
+        printf("Erreur: Impossible de lire la table de couleurs\n");
+        free(img);
+        fclose(file);
+        return NULL;
+    }
+
+    img->data = (unsigned char *)malloc(img->dataSize * sizeof(unsigned char));
+    if (img->data == NULL) {
+        printf("Erreur: Allocation mémoire échouée pour les données\n");
+        free(img);
+        fclose(file);
+        return NULL;
+    }
+
+
+    if (fread(img->data, sizeof(unsigned char), img->dataSize, file) != img->dataSize) {
+        printf("Erreur: Impossible de lire les données de l'image\n");
+        free(img->data);
+        free(img);
+        fclose(file);
+        return NULL;
+    }
+
+    fclose(file);
+    return img;
+}
