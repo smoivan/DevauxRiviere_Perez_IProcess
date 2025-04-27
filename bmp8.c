@@ -114,3 +114,80 @@ void bmp8_free(t_bmp8 *img) {
         free(img);
     }
 }
+
+
+
+
+
+
+void bmp8_printInfo(t_bmp8 *img) {
+    if (img == NULL) {
+        printf("Erreur: Image invalide\n");
+        return;
+    }
+
+    printf("Image Info:\n");
+    printf("Width: %u\n", img->width);
+    printf("Height: %u\n", img->height);
+    printf("Color Depth: %u\n", img->colorDepth);
+    printf("Data Size: %u\n", img->dataSize);
+}
+
+
+
+
+
+
+
+void bmp8_negative(t_bmp8 *img) {
+    if (img == NULL || img->data == NULL) {
+        printf("Erreur: Image invalide\n");
+        return;
+    }
+
+    for (unsigned int i = 0; i < img->dataSize; i++) {
+        img->data[i] = 255 - img->data[i];
+    }
+}
+
+
+
+
+
+
+
+void bmp8_brightness(t_bmp8 *img, int value) {
+    if (img == NULL || img->data == NULL) {
+        printf("Erreur: Image invalide\n");
+        return;
+    }
+
+    for (unsigned int i = 0; i < img->dataSize; i++) {
+        int newValue = img->data[i] + value;
+
+        // Ajustement pour rester dans les limites [0, 255]
+        if (newValue > 255) {
+            newValue = 255;
+        } else if (newValue < 0) {
+            newValue = 0;
+        }
+
+        img->data[i] = (unsigned char)newValue;
+    }
+}
+
+
+
+
+
+
+void bmp8_threshold(t_bmp8 *img, int threshold) {
+    if (img == NULL || img->data == NULL) {
+        printf("Erreur: Image invalide\n");
+        return;
+    }
+
+    for (unsigned int i = 0; i < img->dataSize; i++) {
+        img->data[i] = (img->data[i] >= threshold) ? 255 : 0;
+    }
+}
