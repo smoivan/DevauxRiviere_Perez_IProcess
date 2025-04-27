@@ -36,3 +36,51 @@ t_pixel **bmp24_allocateDataPixels(int width, int height) {
 
     return pixels;
 }
+
+void bmp24_freeDataPixels(t_pixel **pixels, int height) {
+    if (pixels == NULL) {
+        return;
+    }
+
+    for (int i = 0; i < height; i++) {
+        if (pixels[i] != NULL) {
+            free(pixels[i]);
+        }
+    }
+    free(pixels);
+}
+
+
+ */
+t_bmp24 *bmp24_allocate(int width, int height, int colorDepth) {
+    t_bmp24 *img = (t_bmp24 *)malloc(sizeof(t_bmp24));
+    if (img == NULL) {
+        printf("Erreur: Impossible d'allouer de la mémoire pour l'image\n");
+        return NULL;
+    }
+
+    img->width = width;
+    img->height = height;
+    img->colorDepth = colorDepth;
+
+    img->data = bmp24_allocateDataPixels(width, height);
+    if (img->data == NULL) {
+        free(img);
+        return NULL;
+    }
+
+    return img;
+}
+
+
+void bmp24_free(t_bmp24 *img) {
+    if (img == NULL) {
+        return;
+    }
+
+    if (img->data != NULL) {
+        bmp24_freeDataPixels(img->data, img->height);
+    }
+
+    free(img);
+}
