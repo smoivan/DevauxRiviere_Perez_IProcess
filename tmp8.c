@@ -25,3 +25,4 @@ typedef struct {
 	void bmp8_threshold(t_bmp8 * img, int threshold);
 
 
+
