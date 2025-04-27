@@ -135,49 +135,49 @@ void bmp24_writePixelData(t_bmp24 *image, FILE *file) {
 }
 t_bmp24 *bmp24_loadImage(const char *filename) {
     FILE *file = fopen(filename, "rb");
+    
+    // Check if the file exists
     if (file == NULL) {
-        printf("Erreur: Impossible d'ouvrir le fichier %s\n", filename);
+        printf("Error while opening the file, the file does not exist!\n");
         return NULL;
     }
 
+    // Temporary structures
+    t_bmp_header header;
+    t_bmp_info header_info;
 
-    uint16_t type;
-    int32_t width, height;
-    uint16_t bits;
+    // Read headers
+    file_rawRead(0, &header, sizeof(t_bmp_header), 1, file);
+    file_rawRead(sizeof(t_bmp_header), &header_info, sizeof(t_bmp_info), 1, file);
 
-    file_rawRead(BITMAP_MAGIC, &type, sizeof(uint16_t), 1, file);
-    file_rawRead(BITMAP_WIDTH, &width, sizeof(int32_t), 1, file);
-    file_rawRead(BITMAP_HEIGHT, &height, sizeof(int32_t), 1, file);
-    file_rawRead(BITMAP_DEPTH, &bits, sizeof(uint16_t), 1, file);
+    // Read dimensions and color depth
+    int width = header_info.width;
+    int height = header_info.height;
+    int colorDepth = header_info.bits;
 
-    if (type != BMP_TYPE) {
-        printf("Erreur: Le fichier n'est pas au format BMP valide\n");
+    // Check color depth
+    if (colorDepth != 24) {
+        printf("The image is not 24 bits deep");
         fclose(file);
         return NULL;
     }
 
-    if (bits != DEFAULT_DEPTH) {
-        printf("Erreur: L'image n'est pas en 24 bits (profondeur: %d)\n", bits);
+    // Allocate memory
+    t_bmp24 *image = bmp24_allocate(width, height, colorDepth);
+    if (image == NULL) {
         fclose(file);
         return NULL;
     }
 
+    // Set headers
+    image->header = header;
+    image->header_info = header_info;
 
-    t_bmp24 *img = bmp24_allocate(width, height, bits);
-    if (img == NULL) {
-        fclose(file);
-        return NULL;
-    }
-
-
-    file_rawRead(BITMAP_MAGIC, &img->header, sizeof(t_bmp_header), 1, file);
-    file_rawRead(HEADER_SIZE, &img->header_info, sizeof(t_bmp_info), 1, file);
-
-
-    bmp24_readPixelData(img, file);
+    // Read pixel data
+    bmp24_readPixelData(image, file);
 
     fclose(file);
-    return img;
+    return image;
 }
 
 
