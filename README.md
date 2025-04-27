@@ -2,8 +2,9 @@
 
 ## Présentation
 
-###Ce projet, porte sur le traitement d'images au format BMP en langage C.
-L'objectif est d'apprendre à manipuler des fichiers binaires, traiter des images en niveaux de gris (8 bits) et en couleur (24 bits), et appliquer des transformations et des filtres avancés (convolutions, égalisation d'histogramme).###
+Ce projet, porte sur le traitement d'images au format BMP en langage C.
+L'objectif est d'apprendre à manipuler des fichiers binaires, traiter des images en niveaux de gris (8 bits) et en couleur (24 bits), et appliquer des transformations et des filtres avancés (convolutions, égalisation d'histogramme).
+
 ---
 
 ## Auteurs
