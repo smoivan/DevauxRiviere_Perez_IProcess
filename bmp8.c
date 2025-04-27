@@ -2,6 +2,9 @@
 #include <string.h>
 #include "bmp8.h"
 
+
+
+
 t_bmp8 *bmp8_loadImage(const char *filename) {
     FILE *file = fopen(filename, "rb");
 
@@ -12,7 +15,7 @@ t_bmp8 *bmp8_loadImage(const char *filename) {
     }
 
     unsigned char header[54];
-    fread(header, sizeof(unsigned char), 54, file    );
+    fread(header, sizeof(unsigned char), 54, file);
 
 
     img->width = *(unsigned int *)&img->header[18];
@@ -76,14 +79,38 @@ t_bmp8 *bmp8_loadImage(const char *filename) {
     return img;
 }
 
+
+
+
+
+
 void bmp8_saveImage(const char *filename, t_bmp8 *img) {
     if (img == NULL) {
         printf("Erreur: Image invalide\n");
         return;
     }
-    size_t header = fwrite(img->header, sizeof(unsigned char), 54, file);
-        if (header != 54) {
-            printf("Error occured while writing the header");
-            fclose(file);
-            return;
+
+    fwrite(img->header, sizeof(unsigned char), 54, file);
+
+
+    fwrite(img->colorTable, sizeof(unsigned char), 1024, file);
+
+
+    fwrite(img->data, sizeof(unsigned char), img->dataSize, file);
+
+    fclose(file);
+}
+
+
+
+
+
+
+void bmp8_free(t_bmp8 *img) {
+    if (img != NULL) {
+        if (img->data != NULL) {
+            free(img->data);
         }
+        free(img);
+    }
+}
