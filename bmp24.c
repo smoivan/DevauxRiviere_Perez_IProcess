@@ -260,3 +260,170 @@ void bmp24_brightness(t_bmp24 *img, int value) {
         }
     }
 }
+t_pixel bmp24_convolution(t_bmp24 *img, int x, int y, float **kernel, int kernelSize) {
+    t_pixel result = {0, 0, 0};
+    float red_sum = 0.0f, green_sum = 0.0f, blue_sum = 0.0f;
+    int n = kernelSize / 2;
+
+
+    for (int j = -n; j <= n; j++) {
+        for (int i = -n; i <= n; i++) {
+
+            if (x + i >= 0 && x + i < img->width && y + j >= 0 && y + j < img->height) {
+                int kernel_x = i + n;
+                int kernel_y = j + n;
+
+                red_sum += img->data[y + j][x + i].red * kernel[kernel_y][kernel_x];
+                green_sum += img->data[y + j][x + i].green * kernel[kernel_y][kernel_x];
+                blue_sum += img->data[y + j][x + i].blue * kernel[kernel_y][kernel_x];
+            }
+        }
+    }
+
+
+    result.red = (red_sum > 255.0f) ? 255 : ((red_sum < 0.0f) ? 0 : (uint8_t)red_sum);
+    result.green = (green_sum > 255.0f) ? 255 : ((green_sum < 0.0f) ? 0 : (uint8_t)green_sum);
+    result.blue = (blue_sum > 255.0f) ? 255 : ((blue_sum < 0.0f) ? 0 : (uint8_t)blue_sum);
+
+    return result;
+}
+
+
+float **create_box_blur_kernel() {
+    float **kernel = (float **)malloc(3 * sizeof(float *));
+    for (int i = 0; i < 3; i++) {
+        kernel[i] = (float *)malloc(3 * sizeof(float));
+        for (int j = 0; j < 3; j++) {
+            kernel[i][j] = 1.0f / 9.0f;
+        }
+    }
+    return kernel;
+}
+
+
+float **create_gaussian_blur_kernel() {
+    float **kernel = (float **)malloc(3 * sizeof(float *));
+    for (int i = 0; i < 3; i++) {
+        kernel[i] = (float *)malloc(3 * sizeof(float));
+    }
+
+    kernel[0][0] = 1.0f / 16.0f; kernel[0][1] = 2.0f / 16.0f; kernel[0][2] = 1.0f / 16.0f;
+    kernel[1][0] = 2.0f / 16.0f; kernel[1][1] = 4.0f / 16.0f; kernel[1][2] = 2.0f / 16.0f;
+    kernel[2][0] = 1.0f / 16.0f; kernel[2][1] = 2.0f / 16.0f; kernel[2][2] = 1.0f / 16.0f;
+
+    return kernel;
+}
+
+
+float **create_outline_kernel() {
+    float **kernel = (float **)malloc(3 * sizeof(float *));
+    for (int i = 0; i < 3; i++) {
+        kernel[i] = (float *)malloc(3 * sizeof(float));
+    }
+
+    kernel[0][0] = -1.0f; kernel[0][1] = -1.0f; kernel[0][2] = -1.0f;
+    kernel[1][0] = -1.0f; kernel[1][1] =  8.0f; kernel[1][2] = -1.0f;
+    kernel[2][0] = -1.0f; kernel[2][1] = -1.0f; kernel[2][2] = -1.0f;
+
+    return kernel;
+}
+
+
+float **create_emboss_kernel() {
+    float **kernel = (float **)malloc(3 * sizeof(float *));
+    for (int i = 0; i < 3; i++) {
+        kernel[i] = (float *)malloc(3 * sizeof(float));
+    }
+
+    kernel[0][0] = -2.0f; kernel[0][1] = -1.0f; kernel[0][2] = 0.0f;
+    kernel[1][0] = -1.0f; kernel[1][1] =  1.0f; kernel[1][2] = 1.0f;
+    kernel[2][0] =  0.0f; kernel[2][1] =  1.0f; kernel[2][2] = 2.0f;
+
+    return kernel;
+}
+float **create_sharpen_kernel() {
+    float **kernel = (float **)malloc(3 * sizeof(float *));
+    for (int i = 0; i < 3; i++) {
+        kernel[i] = (float *)malloc(3 * sizeof(float));
+    }
+
+    kernel[0][0] =  0.0f; kernel[0][1] = -1.0f; kernel[0][2] =  0.0f;
+    kernel[1][0] = -1.0f; kernel[1][1] =  5.0f; kernel[1][2] = -1.0f;
+    kernel[2][0] =  0.0f; kernel[2][1] = -1.0f; kernel[2][2] =  0.0f;
+
+    return kernel;
+}
+
+
+void free_kernel(float **kernel, int size) {
+    for (int i = 0; i < size; i++) {
+        free(kernel[i]);
+    }
+    free(kernel);
+}
+
+
+void apply_filter(t_bmp24 *img, float **kernel, int kernelSize) {
+    if (img == NULL || img->data == NULL || kernel == NULL) {
+        printf("Erreur: Paramètres invalides\n");
+        return;
+    }
+
+
+    t_pixel **result = bmp24_allocateDataPixels(img->width, img->height);
+    if (result == NULL) {
+        return;
+    }
+
+
+    for (int y = 0; y < img->height; y++) {
+        for (int x = 0; x < img->width; x++) {
+            result[y][x] = bmp24_convolution(img, x, y, kernel, kernelSize);
+        }
+    }
+
+
+    for (int y = 0; y < img->height; y++) {
+        for (int x = 0; x < img->width; x++) {
+            img->data[y][x] = result[y][x];
+        }
+    }
+
+
+    bmp24_freeDataPixels(result, img->height);
+}
+
+
+void bmp24_boxBlur(t_bmp24 *img) {
+    float **kernel = create_box_blur_kernel();
+    apply_filter(img, kernel, 3);
+    free_kernel(kernel, 3);
+}
+
+
+void bmp24_gaussianBlur(t_bmp24 *img) {
+    float **kernel = create_gaussian_blur_kernel();
+    apply_filter(img, kernel, 3);
+    free_kernel(kernel, 3);
+}
+
+
+void bmp24_outline(t_bmp24 *img) {
+    float **kernel = create_outline_kernel();
+    apply_filter(img, kernel, 3);
+    free_kernel(kernel, 3);
+}
+
+
+void bmp24_emboss(t_bmp24 *img) {
+    float **kernel = create_emboss_kernel();
+    apply_filter(img, kernel, 3);
+    free_kernel(kernel, 3);
+}
+
+
+void bmp24_sharpen(t_bmp24 *img) {
+    float **kernel = create_sharpen_kernel();
+    apply_filter(img, kernel, 3);
+    free_kernel(kernel, 3);
+}
