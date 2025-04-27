@@ -3,14 +3,22 @@
 #include "bmp8.h"
 
 t_bmp8 *bmp8_loadImage(const char *filename) {
-    FILE *image = fopen(filename, "rb");
+    FILE *file = fopen(filename, "rb");
 
 
-    if (image == NULL) {
+    if (file == NULL) {
         printf("Erreur: Impossible d'ouvrir le fichier %s\n", filename);
         return NULL;
     }
 
+    unsigned char header[54];
+    fread(header, sizeof(unsigned char), 54, file    );
+
+
+    img->width = *(unsigned int *)&img->header[18];
+    img->height = *(unsigned int *)&img->header[22];
+    img->colorDepth = *(unsigned short *)&img->header[28];
+    img->dataSize = *(unsigned int *)&img->header[34];
 
     t_bmp8 *img = (t_bmp8 *)malloc(sizeof(t_bmp8));
     if (img == NULL) {
@@ -32,10 +40,6 @@ t_bmp8 *bmp8_loadImage(const char *filename) {
         return NULL;
     }
 
-    img->width = *(unsigned int *)&img->header[18];
-    img->height = *(unsigned int *)&img->header[22];
-    img->colorDepth = *(unsigned short *)&img->header[28];
-    img->dataSize = *(unsigned int *)&img->header[34];
 
     if (img->colorDepth != 8) {
         printf("Erreur: L'image n'est pas en 8 bits\n");
@@ -71,3 +75,15 @@ t_bmp8 *bmp8_loadImage(const char *filename) {
     fclose(file);
     return img;
 }
+
+void bmp8_saveImage(const char *filename, t_bmp8 *img) {
+    if (img == NULL) {
+        printf("Erreur: Image invalide\n");
+        return;
+    }
+    size_t header = fwrite(img->header, sizeof(unsigned char), 54, file);
+        if (header != 54) {
+            printf("Error occured while writing the header");
+            fclose(file);
+            return;
+        }
