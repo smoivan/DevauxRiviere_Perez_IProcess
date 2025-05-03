@@ -1,3 +1,11 @@
+#Probleme lors de la création du Github classroom. Tout le projet en C sera effectué ici pour le moment
+
+
+
+
+
+
+
 # P1 - TI202 : Image processing en C
 
 ## Présentation
