@@ -1,4 +1,4 @@
-#Probleme lors de la création du Github classroom. Tout le projet en C sera effectué ici pour le moment
+# Probleme lors de la création du Github classroom. Tout le projet en C sera effectué ici pour le moment
 
 
 
