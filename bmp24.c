@@ -2,18 +2,27 @@
 #include <string.h>
 
 
- */
 void file_rawRead(uint32_t position, void *buffer, uint32_t size, size_t n, FILE *file) {
     fseek(file, position, SEEK_SET);
     fread(buffer, size, n, file);
 }
 
 
- */
+
+
+
+
+
 void file_rawWrite(uint32_t position, void *buffer, uint32_t size, size_t n, FILE *file) {
     fseek(file, position, SEEK_SET);
     fwrite(buffer, size, n, file);
 }
+
+
+
+
+
+
 
 t_pixel **bmp24_allocateDataPixels(int width, int height) {
     t_pixel **pixels = (t_pixel **)malloc(height * sizeof(t_pixel *));
@@ -51,7 +60,10 @@ void bmp24_freeDataPixels(t_pixel **pixels, int height) {
 }
 
 
- */
+
+
+
+
 t_bmp24 *bmp24_allocate(int width, int height, int colorDepth) {
     t_bmp24 *img = (t_bmp24 *)malloc(sizeof(t_bmp24));
     if (img == NULL) {
@@ -73,6 +85,11 @@ t_bmp24 *bmp24_allocate(int width, int height, int colorDepth) {
 }
 
 
+
+
+
+
+
 void bmp24_free(t_bmp24 *img) {
     if (img == NULL) {
         return;
@@ -84,6 +101,10 @@ void bmp24_free(t_bmp24 *img) {
 
     free(img);
 }
+
+
+
+
 
 void bmp24_readPixelValue(t_bmp24 *image, int x, int y, FILE *file) {
 
@@ -100,7 +121,9 @@ void bmp24_readPixelValue(t_bmp24 *image, int x, int y, FILE *file) {
 }
 
 
- */
+
+
+
 void bmp24_readPixelData(t_bmp24 *image, FILE *file) {
     for (int y = 0; y < image->height; y++) {
         for (int x = 0; x < image->width; x++) {
@@ -110,7 +133,8 @@ void bmp24_readPixelData(t_bmp24 *image, FILE *file) {
 }
 
 
- */
+
+
 void bmp24_writePixelValue(t_bmp24 *image, int x, int y, FILE *file) {
 
     uint32_t position = image->header.offset + ((image->height - 1 - y) * image->width + x) * 3;
@@ -126,6 +150,9 @@ void bmp24_writePixelValue(t_bmp24 *image, int x, int y, FILE *file) {
 
 
 
+
+
+
 void bmp24_writePixelData(t_bmp24 *image, FILE *file) {
     for (int y = 0; y < image->height; y++) {
         for (int x = 0; x < image->width; x++) {
@@ -133,6 +160,10 @@ void bmp24_writePixelData(t_bmp24 *image, FILE *file) {
         }
     }
 }
+
+
+
+
 t_bmp24 *bmp24_loadImage(const char *filename) {
     FILE *file = fopen(filename, "rb");
     
@@ -181,6 +212,11 @@ t_bmp24 *bmp24_loadImage(const char *filename) {
 }
 
 
+
+
+
+
+
 void bmp24_saveImage(t_bmp24 *img, const char *filename) {
     if (img == NULL) {
         printf("Erreur: Image invalide\n");
@@ -204,6 +240,11 @@ void bmp24_saveImage(t_bmp24 *img, const char *filename) {
 }
 
 
+
+
+
+
+
 void bmp24_negative(t_bmp24 *img) {
     if (img == NULL || img->data == NULL) {
         printf("Erreur: Image invalide\n");
@@ -218,6 +259,11 @@ void bmp24_negative(t_bmp24 *img) {
         }
     }
 }
+
+
+
+
+
 
 
 void bmp24_grayscale(t_bmp24 *img) {
@@ -240,6 +286,11 @@ void bmp24_grayscale(t_bmp24 *img) {
 }
 
 
+
+
+
+
+
 void bmp24_brightness(t_bmp24 *img, int value) {
     if (img == NULL || img->data == NULL) {
         printf("Erreur: Image invalide\n");
@@ -260,6 +311,11 @@ void bmp24_brightness(t_bmp24 *img, int value) {
         }
     }
 }
+
+
+
+
+
 t_pixel bmp24_convolution(t_bmp24 *img, int x, int y, float **kernel, int kernelSize) {
     t_pixel result = {0, 0, 0};
     float red_sum = 0.0f, green_sum = 0.0f, blue_sum = 0.0f;
@@ -289,6 +345,10 @@ t_pixel bmp24_convolution(t_bmp24 *img, int x, int y, float **kernel, int kernel
 }
 
 
+
+
+
+
 float **create_box_blur_kernel() {
     float **kernel = (float **)malloc(3 * sizeof(float *));
     for (int i = 0; i < 3; i++) {
@@ -299,6 +359,12 @@ float **create_box_blur_kernel() {
     }
     return kernel;
 }
+
+
+
+
+
+
 
 
 float **create_gaussian_blur_kernel() {
@@ -315,6 +381,11 @@ float **create_gaussian_blur_kernel() {
 }
 
 
+
+
+
+
+
 float **create_outline_kernel() {
     float **kernel = (float **)malloc(3 * sizeof(float *));
     for (int i = 0; i < 3; i++) {
@@ -329,6 +400,11 @@ float **create_outline_kernel() {
 }
 
 
+
+
+
+
+
 float **create_emboss_kernel() {
     float **kernel = (float **)malloc(3 * sizeof(float *));
     for (int i = 0; i < 3; i++) {
@@ -341,6 +417,13 @@ float **create_emboss_kernel() {
 
     return kernel;
 }
+
+
+
+
+
+
+
 float **create_sharpen_kernel() {
     float **kernel = (float **)malloc(3 * sizeof(float *));
     for (int i = 0; i < 3; i++) {
@@ -355,12 +438,23 @@ float **create_sharpen_kernel() {
 }
 
 
+
+
+
+
+
+
 void free_kernel(float **kernel, int size) {
     for (int i = 0; i < size; i++) {
         free(kernel[i]);
     }
     free(kernel);
 }
+
+
+
+
+
 
 
 void apply_filter(t_bmp24 *img, float **kernel, int kernelSize) {
@@ -394,11 +488,20 @@ void apply_filter(t_bmp24 *img, float **kernel, int kernelSize) {
 }
 
 
+
+
+
+
 void bmp24_boxBlur(t_bmp24 *img) {
     float **kernel = create_box_blur_kernel();
     apply_filter(img, kernel, 3);
     free_kernel(kernel, 3);
 }
+
+
+
+
+
 
 
 void bmp24_gaussianBlur(t_bmp24 *img) {
@@ -408,6 +511,11 @@ void bmp24_gaussianBlur(t_bmp24 *img) {
 }
 
 
+
+
+
+
+
 void bmp24_outline(t_bmp24 *img) {
     float **kernel = create_outline_kernel();
     apply_filter(img, kernel, 3);
@@ -415,11 +523,19 @@ void bmp24_outline(t_bmp24 *img) {
 }
 
 
+
+
+
+
 void bmp24_emboss(t_bmp24 *img) {
     float **kernel = create_emboss_kernel();
     apply_filter(img, kernel, 3);
     free_kernel(kernel, 3);
 }
+
+
+
+
 
 
 void bmp24_sharpen(t_bmp24 *img) {
