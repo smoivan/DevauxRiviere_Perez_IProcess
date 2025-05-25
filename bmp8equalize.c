@@ -1,4 +1,4 @@
-#include "equalize8.h"
+#include "bmp8equalize.h"
 #include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
