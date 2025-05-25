@@ -26,8 +26,8 @@ typedef enum {
 // Prototypes
 int lire_image8(const char* nom_fichier);
 int lire_image24(const char* nom_fichier);
-void equalizer8(void);
-void equalizer24(void);
+void bmp8equalize(void);
+void bmp24equalize(void);
 
 // Fonction de vérification du type
 static int verifier_type(const char* type_str) {
@@ -74,7 +74,7 @@ static ErrorCode traiter_image(const char* nom_fichier, BmpType type) {
         case BMP_8BIT:
             resultat = lire_image8(nom_fichier);
             if (resultat == 0) {
-                equalizer8();
+                bmp8equalize();
                 printf("Égalisation de l'image 8 bits réussie\n");
                 return ERR_OK;
             }
@@ -84,7 +84,7 @@ static ErrorCode traiter_image(const char* nom_fichier, BmpType type) {
         case BMP_24BIT:
             resultat = lire_image24(nom_fichier);
             if (resultat == 0) {
-                equalizer24();
+                bmp24equalize();
                 printf("Égalisation de l'image 24 bits réussie\n");
                 return ERR_OK;
             }
