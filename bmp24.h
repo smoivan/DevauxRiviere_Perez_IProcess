@@ -2,7 +2,6 @@
 #define BMP24_H
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <stdint.h>
 
 /* 
@@ -102,7 +101,7 @@ void bmp24_brightness(t_bmp24 *img, int value); // Ajuste la luminosité
 void bmp24_boxBlur(t_bmp24 *img);      // Flou simple
 void bmp24_gaussianBlur(t_bmp24 *img);  // Flou gaussien
 void bmp24_outline(t_bmp24 *img);       // Détection des contours
-void bmp24_emboss(t_bmp24 *img); paramtre,        // Effet de relief
+void bmp24_emboss(t_bmp24 *img);         // Effet de relief
 void bmp24_sharpen(t_bmp24 *img);       // Augmente la netteté
 
 #endif

@@ -77,4 +77,14 @@ void bmp8_brightness(t_bmp8 *img, int value);
  */
 void bmp8_threshold(t_bmp8 *img, int threshold);
 
+
+/*
+ * Applique un filtre 3x3 à l'image avec une convolution
+ * Paramètres :
+ *   img        - Image à modifier
+ *   kernel     - Matrice du filtre (3x3)
+ *   kernelSize - Taille du noyau (doit être impair, ex : 3)
+ */
+void bmp8_applyFilter(t_bmp8 *img, float **kernel, int kernelSize);
+
 #endif /* BMP8_H */

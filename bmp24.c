@@ -1,5 +1,6 @@
 #include "bmp24.h"
 #include <string.h>
+#include <stdlib.h>
 
 /* FONCTIONS DE BASE FICHIER */
 
