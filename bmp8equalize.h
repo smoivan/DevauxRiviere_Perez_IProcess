@@ -1,14 +1,31 @@
-/#ifndef EQUALIZE8_H
+#ifndef EQUALIZE8_H
 #define EQUALIZE8_H
 #include "bmp8.h"
 
-// Calcule l'histogramme pour les images 8-bits en niveaux de gris
+/*
+ * Ces fonctions permettent d'améliorer automatiquement le contraste des images
+ * en noir et blanc
+ */
+
+/*
+ * Analyse l'image pour compter l'utilisation des différents niveaux de gris
+ * Renvoie un tableau de 256 valeurs (une pour chaque niveau de gris)
+ */
 unsigned int *bmp8_computeHistogram(t_bmp8 *img);
 
-// Calcule la CDF à partir d'un histogramme donné
+/*
+ * Prépare les nouvelles valeurs pour améliorer le contraste
+ * Utilise l'histogramme pour calculer comment redistribuer les niveaux de gris
+ */
 unsigned int *bmp8_computeCDF(unsigned int *hist, unsigned int total_pixels);
 
-// Applique l'égalisation d'histogramme à l'image en niveaux de gris
+/*
+ * Améliore automatiquement le contraste de l'image
+ * Cette fonction utilise les deux fonctions précédentes pour :
+ * - Analyser l'image
+ * - Calculer les meilleures valeurs
+ * - Appliquer les modifications
+ */
 void bmp8_equalize(t_bmp8 *img);
 
 #endif // EQUALIZE8_H

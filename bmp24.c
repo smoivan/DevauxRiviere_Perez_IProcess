@@ -1,6 +1,93 @@
 #include "bmp24.h"
 #include <string.h>
 
+/*
+ * Fonctions pour lire et écrire dans un fichier
+ */
+/* Lit des données depuis un fichier à une position précise */
+void file_rawRead(uint32_t position, void *buffer, uint32_t size, size_t n, FILE *file);
+
+/* Écrit des données dans un fichier à une position précise */
+void file_rawWrite(uint32_t position, void *buffer, uint32_t size, size_t n, FILE *file);
+
+/*
+ * Fonctions pour gérer les images couleur (24 bits)
+ */
+
+/* 
+ * Charge une image depuis un fichier
+ * Renvoie : l'image chargée ou NULL si erreur
+ */
+t_bmp24 *bmp24_loadImage(const char *filename);
+
+/* 
+ * Sauvegarde une image dans un fichier
+ * Paramètres :
+ * - img : l'image à sauvegarder
+ * - filename : nom du fichier où sauvegarder
+ */
+void bmp24_saveImage(t_bmp24 *img, const char *filename);
+
+/*
+ * Effets de base sur les images
+ */
+
+/* 
+ * Inverse les couleurs de l'image 
+ * (comme un négatif photo)
+ */
+void bmp24_negative(t_bmp24 *img);
+
+/* 
+ * Convertit l'image en niveaux de gris
+ */
+void bmp24_grayscale(t_bmp24 *img);
+
+/* 
+ * Change la luminosité de l'image
+ * value : positif pour éclaircir, négatif pour assombrir
+ */
+void bmp24_brightness(t_bmp24 *img, int value);
+
+/*
+ * Effets de flou et filtres
+ */
+
+/* 
+ * Applique un flou simple à l'image
+ */
+void bmp24_boxBlur(t_bmp24 *img);
+
+/* 
+ * Applique un flou plus doux (gaussien)
+ */
+void bmp24_gaussianBlur(t_bmp24 *img);
+
+/* 
+ * Fait ressortir les contours de l'image
+ */
+void bmp24_outline(t_bmp24 *img);
+
+/* 
+ * Donne un effet de relief à l'image
+ */
+void bmp24_emboss(t_bmp24 *img);
+
+/* 
+ * Rend l'image plus nette
+ */
+void bmp24_sharpen(t_bmp24 *img);
+
+/*
+ * Fonctions de gestion de la mémoire
+ */
+
+/* 
+ * Libère la mémoire utilisée par une image
+ * À utiliser quand on n'a plus besoin de l'image
+ */
+void bmp24_free(t_bmp24 *img);
+
 
 void file_rawRead(uint32_t position, void *buffer, uint32_t size, size_t n, FILE *file) {
     fseek(file, position, SEEK_SET);
