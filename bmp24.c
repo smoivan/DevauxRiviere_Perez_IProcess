@@ -343,6 +343,12 @@ t_bmp24 *bmp24_loadImage(const char *filename) {
     file_rawRead(0, &header, sizeof(t_bmp_header), 1, file);
     file_rawRead(sizeof(t_bmp_header), &header_info, sizeof(t_bmp_info), 1, file);
 
+    if (header.magic != 0x4D42) {  // "BM" en hexadécimal
+        printf("Erreur: Le fichier n'est pas au format BMP\n");
+        fclose(file);
+        return NULL;
+    }
+
     // Read dimensions and color depth
     int width = header_info.width;
     int height = header_info.height;

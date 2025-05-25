@@ -73,6 +73,10 @@ t_bmp8 *bmp8_loadImage(const char *filename) {
         return NULL;
     }
 
+	// Calcul du padding (à ajouter après width)
+	int padding = (4 - (img->width % 4)) % 4;
+	img->dataSize = (img->width + padding) * img->height;
+
     // Lecture de la table de couleurs
     if (fread(img->colorTable, sizeof(unsigned char), 1024, file) != 1024) {
         fprintf(stderr, "Erreur: Impossible de lire la table de couleurs\n");
