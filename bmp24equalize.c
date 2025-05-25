@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <math.h>
 
+#define RGB_MAX 255
+#define NIVEAUX_GRIS 256
+
 /* FONCTIONS DE CONVERSION COULEUR */
 
 /* rgb2yuv
