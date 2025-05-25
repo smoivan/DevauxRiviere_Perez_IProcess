@@ -4,6 +4,21 @@
 #include <stdio.h>
 #include "bmp8.h"
 
+/*
+ * Charge une image en noir et blanc (format BMP 8 bits)
+ * 
+ * Ce qu'elle fait :
+ * - Ouvre le fichier image
+ * - Vérifie que c'est bien une image BMP en noir et blanc
+ * - Charge l'image en mémoire
+ * 
+ * Paramètre :
+ * - filename : le nom du fichier image à ouvrir
+ * 
+ * Renvoie :
+ * - L'image chargée si tout va bien
+ * - NULL si il y a eu un problème
+ */
 t_bmp8 *bmp8_loadImage(const char *filename) {
     FILE *file = fopen(filename, "rb");
 
@@ -88,6 +103,21 @@ t_bmp8 *bmp8_loadImage(const char *filename) {
     return img;
 }
 
+/*
+ * Sauvegarde une image en noir et blanc dans un fichier
+ * 
+ * Ce qu'elle fait :
+ * - Crée un nouveau fichier
+ * - Écrit l'image dedans au format BMP
+ * 
+ * Paramètres :
+ * - filename : nom du fichier où sauvegarder
+ * - img : l'image à sauvegarder
+ * 
+ * Renvoie :
+ * - 0 si la sauvegarde a réussi
+ * - -1 si il y a eu une erreur
+ */
 int bmp8_saveImage(const char *filename, t_bmp8 *img) {
     if (img == NULL) {
         fprintf(stderr, "Erreur: Image invalide\n");
@@ -125,6 +155,16 @@ int bmp8_saveImage(const char *filename, t_bmp8 *img) {
     return 0;
 }
 
+/*
+ * Libère la mémoire utilisée par une image
+ * 
+ * Ce qu'elle fait :
+ * - Supprime les données de l'image de la mémoire
+ * - À utiliser quand on n'a plus besoin de l'image
+ * 
+ * Paramètre :
+ * - img : l'image à supprimer
+ */
 void bmp8_free(t_bmp8 *img) {
     if (img != NULL) {
         if (img->data != NULL) {
@@ -134,6 +174,19 @@ void bmp8_free(t_bmp8 *img) {
     }
 }
 
+/*
+ * Affiche les informations sur l'image
+ * 
+ * Ce qu'elle fait :
+ * Montre à l'écran :
+ * - La largeur de l'image
+ * - La hauteur de l'image
+ * - Le type d'image (8 bits)
+ * - La taille des données
+ * 
+ * Paramètre :
+ * - img : l'image dont on veut voir les infos
+ */
 void bmp8_printInfo(t_bmp8 *img) {
     if (img == NULL) {
         fprintf(stderr, "Erreur: Image invalide\n");
@@ -147,6 +200,16 @@ void bmp8_printInfo(t_bmp8 *img) {
     printf("    Taille des données: %u\n", img->dataSize);
 }
 
+/*
+ * Inverse les couleurs de l'image (effet négatif)
+ * 
+ * Ce qu'elle fait :
+ * - Transforme chaque pixel en son opposé
+ * - Le blanc devient noir et inversement
+ * 
+ * Paramètre :
+ * - img : l'image à modifier
+ */
 void bmp8_negative(t_bmp8 *img) {
     if (img == NULL || img->data == NULL) {
         fprintf(stderr, "Erreur: Image invalide\n");
@@ -158,6 +221,17 @@ void bmp8_negative(t_bmp8 *img) {
     }
 }
 
+/*
+ * Change la luminosité de l'image
+ * 
+ * Ce qu'elle fait :
+ * - Rend l'image plus claire (valeur positive)
+ * - Ou plus sombre (valeur négative)
+ * 
+ * Paramètres :
+ * - img : l'image à modifier
+ * - value : combien on veut éclaircir ou assombrir
+ */
 void bmp8_brightness(t_bmp8 *img, int value) {
     if (img == NULL || img->data == NULL) {
         fprintf(stderr, "Erreur: Image invalide\n");
