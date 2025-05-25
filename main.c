@@ -1,141 +1,198 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+#include <stdint.h>
 #include "bmp8.h"
-#include "bmp8equalize.h"
-#include "bmp24equalize.h"
 #include "bmp24.h"
-#include <errno.h>
+#include "bmp24equalize.h"
+#include "bmp8equalize.h"
 
-// Constantes
-#define EXIT_SUCCESS 0
-#define EXIT_FAILURE 1
-#define MAX_FILENAME 256
-#define EXTENSION ".bmp"
-
-// Codes d'erreur
-typedef enum {
-    ERR_OK = 0,
-    ERR_FORMAT,
-    ERR_LECTURE,
-    ERR_TRAITEMENT
-} ErrorCode;
-
-// Types d'image supportés
-typedef enum {
-    BMP_8BIT = 8,
-    BMP_24BIT = 24
-} BmpType;
-
-// Prototypes
-void bmp8_equalize(t_bmp8 *img);
-void bmp24_equalize(t_bmp24 *img);
-
-// Fonction de vérification du type
-static int verifier_type(const char* type_str) {
-    // Vérification que la chaîne contient uniquement des chiffres
-    for (int i = 0; type_str[i] != '\0'; i++) {
-        if (!isdigit(type_str[i])) return 0;
-    }
-    
-    int type = atoi(type_str);
-    return (type == BMP_8BIT || type == BMP_24BIT);
+// Detection de la profondeur de couleur d'une image BMP (8 ou 24 bits)
+int detectBitDepth(const char *filename) {
+    FILE *f = fopen(filename, "rb"); // Ouvrir en binaire
+    if (!f) return -1; // Erreur d’ouverture
+    fseek(f, 28, SEEK_SET); // Se placer sur le champ des bits
+    uint16_t bits;
+    fread(&bits, sizeof(uint16_t), 1, f); // Lire la profondeur
+    printf("DEBUG bits = %d\n", bits);
+    fclose(f); // Fermer le fichier
+    return (bits == 8 || bits == 24) ? bits : -1;
 }
 
-// Fonction de vérification du fichier
-static ErrorCode verifier_fichier(const char* nom_fichier) {
-    if (!nom_fichier) return ERR_FORMAT;
-    
-    size_t len = strlen(nom_fichier);
-    if (len >= MAX_FILENAME) {
-        fprintf(stderr, "Erreur : Nom de fichier trop long\n");
-        return ERR_FORMAT;
-    }
-    
-    if (len < strlen(EXTENSION) || 
-        strcasecmp(nom_fichier + len - strlen(EXTENSION), EXTENSION) != 0) {
-        fprintf(stderr, "Erreur : Le fichier doit avoir l'extension %s\n", EXTENSION);
-        return ERR_FORMAT;
-    }
-    
-    FILE* test = fopen(nom_fichier, "rb");
-    if (!test) {
-        fprintf(stderr, "errno value: %d\n", errno);
-        perror("Erreur d'ouverture du fichier");
-        return ERR_LECTURE;
-    }
-    fclose(test);
-    
-    return ERR_OK;
-}
+// Menu de filtres pour les images en 8 bits
+void applyFilters8(t_bmp8 *img) {
+    int choix;
+    while (1) {
+        printf("\nSelectionnez un filtre a appliquer :\n");
+        printf("1. Negatif\n");
+        printf("2. Luminosite\n");
+        printf("3. Noir et blanc\n");
+        printf("4. Revenir au menu principal\n");
+        printf(">>> Votre choix : ");
+        scanf("%d", &choix);
+        getchar(); // Absorber le saut de ligne
 
-// Fonction de traitement
-static ErrorCode traiter_image(const char* nom_fichier, BmpType type)
-{
-    int resultat;
-    
-    switch (type) {
-    case BMP_8BIT: {
-            t_bmp8 *image = bmp8_loadImage(nom_fichier);
-            if (image) {
-                bmp8_negative(image);
-                bmp8_saveImage("negative.bmp", image);
-                bmp8_free(image);
-                printf("negation de l'image 8 bits reussie\n");
-                return ERR_OK;
+        switch (choix) {
+            case 1: bmp8_negative(img); printf("Negatif applique.\n"); break;
+            case 2: {
+                int valeur;
+                printf("Valeur de luminosite (-255 a 255) : ");
+                scanf("%d", &valeur); getchar();
+                bmp8_brightness(img, valeur);
+                printf("Luminosite modifiee.\n");
+                break;
             }
-            fprintf(stderr, "Échec du traitement de l'image 8 bits\n");
-            return ERR_TRAITEMENT;
-    }
-
-    case BMP_24BIT: {
-            t_bmp24 *image = bmp24_loadImage(nom_fichier);
-            if (image) {
-                bmp24_equalize(image);
-                bmp24_saveImage(image, "egalise.bmp");
-                bmp24_free(image);
-                printf("Égalisation de l'image 24 bits réussie\n");
-                return ERR_OK;
+            case 3: {
+                int seuil;
+                printf("Valeur de seuil (0 a 255) : ");
+                scanf("%d", &seuil); getchar();
+                bmp8_threshold(img, seuil);
+                printf("Conversion en noir et blanc terminee.\n");
+                break;
             }
-            fprintf(stderr, "Échec du traitement de l'image 24 bits\n");
-            return ERR_TRAITEMENT;
-    }
-
-    default:
-        return ERR_FORMAT;
+            case 4: return;
+            default: printf("Option invalide.\n");
+        }
     }
 }
 
+// Menu de filtres pour les images en 24 bits
+void applyFilters24(t_bmp24 *img) {
+    int choix;
+    while (1) {
+        printf("\nSelectionnez un filtre a appliquer :\n");
+        printf("1. Negatif\n");
+        printf("2. Luminosite\n");
+        printf("3. Niveaux de gris\n");
+        printf("4. Egalisation d'histogramme\n");
+        printf("5. Revenir au menu principal\n");
+        printf(">>> Votre choix : ");
+        scanf("%d", &choix);
+        getchar();
 
-
-    int main(int argc, char *argv[]) {
-        // Vérification des arguments
-        if (argc != 3) {
-            fprintf(stderr, "Usage: %s <fichier_image%s> <type>\n", argv[0], EXTENSION);
-            fprintf(stderr, "type: %d pour BMP %d-bit ou %d pour BMP %d-bit\n",
-                    BMP_8BIT, BMP_8BIT, BMP_24BIT, BMP_24BIT);
-            return EXIT_FAILURE;
+        switch (choix) {
+            case 1: bmp24_negative(img); printf("Negatif applique.\n"); break;
+            case 2: {
+                int valeur;
+                printf("Valeur de luminosite (-255 a 255) : ");
+                scanf("%d", &valeur); getchar();
+                bmp24_brightness(img, valeur);
+                printf("Luminosite modifiee.\n");
+                break;
+            }
+            case 3: bmp24_grayscale(img); printf("Image convertie en niveaux de gris.\n"); break;
+            case 4: bmp24_equalize(img); printf("Egalisation d'histogramme effectuee.\n"); break;
+            case 5: return;
+            default: printf("Option invalide.\n");
         }
-
-        // Validation du type
-        if (!verifier_type(argv[2])) {
-            fprintf(stderr, "Type non valide. Utilisez %d ou %d\n", BMP_8BIT, BMP_24BIT);
-            return EXIT_FAILURE;
-        }
-        BmpType type = (BmpType)atoi(argv[2]);
-
-        // Vérification du fichier
-        ErrorCode err = verifier_fichier(argv[1]);
-        if (err != ERR_OK) {
-            return EXIT_FAILURE;
-        }
-
-        // Traitement de l'image
-        err = traiter_image(argv[1], type);
-        if (err != ERR_OK) {
-            return EXIT_FAILURE;
-        }
-
-        return EXIT_SUCCESS;
     }
+}
+
+// Fonction principale
+int main(void) {
+    char cheminFichier[256]; // Stockage du chemin
+    int choix;
+    int bits = -1; // Profondeur detectee
+    t_bmp8 *img8 = NULL;
+    t_bmp24 *img24 = NULL;
+
+    printf("\nBienvenue dans l'application d'edition d'images BMP !\n");
+
+    while (1) {
+        printf("\nVeuillez choisir une option\n");
+        printf("1. Ouvrir une image\n");
+        printf("2. Sauvegarder une image\n");
+        printf("3. Appliquer un filtre\n");
+        printf("4. Afficher les informations\n");
+        printf("5. Quitter\n");
+        printf(">>> Votre choix : ");
+
+        char entree[10];
+        fgets(entree, sizeof(entree), stdin);
+        if (sscanf(entree, "%d", &choix) != 1) {
+            printf("Saisie incorrecte. Veuillez entrer un nombre de 1 a 5.\n");
+            continue;
+        }
+
+        switch (choix) {
+            case 1: {
+                printf("Chemin vers l'image : ");
+                scanf("%255s", cheminFichier); getchar();
+
+                bits = detectBitDepth(cheminFichier);
+                printf("DEBUG : profondeur detectee = %d\n", bits);
+
+                // Liberer les anciennes images
+                if (img8) { bmp8_free(img8); img8 = NULL; }
+                if (img24) { bmp24_free(img24); img24 = NULL; }
+
+                if (bits == 8) {
+                    img8 = bmp8_loadImage(cheminFichier);
+                    if (!img8) {
+                        printf("Erreur : impossible de charger l'image 8 bits.\n");
+                        bits = -1;
+                    } else {
+                        printf("Image 8 bits chargee avec succes !\n");
+                    }
+                } else if (bits == 24) {
+                    img24 = bmp24_loadImage(cheminFichier);
+                    if (!img24) {
+                        printf("Erreur : chargement de l'image 24 bits echoue.\n");
+                        bits = -1;
+                    } else {
+                        printf("Image 24 bits chargee avec succes !\n");
+                        printf("DEBUG – Premier pixel : R=%d G=%d B=%d\n",
+                               img24->data[0][0].red,
+                               img24->data[0][0].green,
+                               img24->data[0][0].blue);
+                    }
+                } else {
+                    printf("Format non reconnu. Seuls les fichiers BMP 8 et 24 bits sont supportes.\n");
+                }
+                break;
+            }
+
+            case 2: {
+                if (bits == 8 && img8) {
+                    printf("Nom du fichier de sortie : ");
+                    scanf("%255s", cheminFichier); getchar();
+                    bmp8_saveImage(cheminFichier, img8);
+                } else if (bits == 24 && img24) {
+                    printf("Nom du fichier de sortie : ");
+                    scanf("%255s", cheminFichier); getchar();
+                    bmp24_saveImage(img24, cheminFichier);
+                } else {
+                    printf("Veuillez d'abord charger une image.\n");
+                }
+                break;
+            }
+
+            case 3:
+                if (bits == 8 && img8) applyFilters8(img8);
+                else if (bits == 24 && img24) applyFilters24(img24);
+                else printf("Aucune image n'est chargee.\n");
+                break;
+
+            case 4:
+                if (bits == 8 && img8) {
+                    bmp8_printInfo(img8);
+                } else if (bits == 24 && img24) {
+                    printf("Informations sur l'image :\n");
+                    printf("Largeur       : %d px\n", img24->width);
+                    printf("Hauteur       : %d px\n", img24->height);
+                    printf("Profondeur    : %d bits\n", img24->colorDepth);
+                } else {
+                    printf("Veuillez charger une image pour afficher les infos.\n");
+                }
+                break;
+
+            case 5:
+                if (img8) bmp8_free(img8);
+                if (img24) bmp24_free(img24);
+                printf("Fermeture du programme. A bientot !\n");
+                return 0;
+
+            default:
+                printf("Choix invalide. Entrez un nombre entre 1 et 5.\n");
+        }
+    }
+}
