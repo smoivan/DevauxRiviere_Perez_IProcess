@@ -1,4 +1,16 @@
-
+/**
+ * @file bmp8.c
+ *
+ * @brief
+ * Ce fichier gère les images au format BMP 8 bits (noir et blanc ou niveaux de gris).
+ * Il permet de charger et de sauvegarder ce type d’image, d’afficher des informations (taille, profondeur),
+ * et de faire quelques modifications simples (négatif, luminosité, seuil, filtres).
+ * 
+ * Toutes les fonctions présentes ici servent à manipuler facilement les images BMP dans le projet.
+ *
+ * @author  [Aureilien Devaux-Riviere]
+ * @date    [27/04/25]
+ */
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>

@@ -1,4 +1,17 @@
 
+/**
+ * @file bmp8.h
+ *
+ * @brief
+ * Ce fichier décrit la structure d’une image BMP 8 bits (noir et blanc/niveaux de gris)
+ * et déclare les fonctions principales pour les manipuler dans le projet.
+ * On peut ainsi charger, sauvegarder, afficher, modifier ou filtrer des images BMP facilement.
+ *
+ * @author  [Aurelien Devaux-Rivière]
+ * @date    [28/04/25]
+ */
+
+
 #ifndef BMP8_H
 #define BMP8_H
 

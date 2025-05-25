@@ -1,3 +1,14 @@
+/**
+ * @file bmp8equalize.h
+ *
+ * @brief
+ * Déclarations des fonctions pour améliorer automatiquement le contraste
+ * des images BMP 8 bits en noir et blanc.
+ *
+ * @author [Ivan]
+ * @date   [Perez]
+ */
+
 #ifndef EQUALIZE8_H
 #define EQUALIZE8_H
 #include "bmp8.h"
