@@ -8,4 +8,5 @@ add_executable(main
         bmp8.c
         bmp8equalize.c
         bmp24equalize.c
+        bmp24.c
 )

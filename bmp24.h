@@ -94,7 +94,20 @@ t_bmp24 *bmp24_allocate(int width, int height, int colorDepth);
 void bmp24_free(t_bmp24 *img);
 
 /* Lecture/Écriture de fichiers */
+/* file_rawRead
+ * Rôle : Lit des données dans un fichier à une position spécifique
+ * Paramètres :
+ *   position - Position dans le fichier où commencer la lecture
+ *   buffer   - Pointeur vers la zone mémoire où stocker les données
+ *   size     - Taille d'un élément à lire
+ *   n        - Nombre d'éléments à lire
+ *   file     - Pointeur vers le fichier source
+ */
 void file_rawRead(uint32_t position, void *buffer, uint32_t size, size_t n, FILE *file);
+/* file_rawWrite
+ * Rôle : Écrit des données dans un fichier à une position spécifique
+ * Paramètres : Identiques à file_rawRead mais pour l'écriture
+ */
 void file_rawWrite(uint32_t position, void *buffer, uint32_t size, size_t n, FILE *file);
 
 /* Manipulation des pixels */
@@ -104,12 +117,46 @@ void bmp24_writePixelValue(t_bmp24 *image, int x, int y, FILE *file);
 void bmp24_writePixelData(t_bmp24 *image, FILE *file);
 
 /* Chargement et sauvegarde */
+/* FONCTIONS PRINCIPALES */
+
+/* bmp24_loadImage
+ * Rôle : Charge une image BMP 24 bits
+ * Paramètre :
+ *   filename - Chemin du fichier à charger
+ * Retour : Structure image ou NULL si erreur
+ * Vérifie : Format 24 bits, existence fichier
+ */
 t_bmp24 *bmp24_loadImage(const char *filename);
+
+/* bmp24_saveImage
+ * Rôle : Sauvegarde une image en BMP
+ * Paramètres :
+ *   img      - Image à sauvegarder
+ *   filename - Nom du fichier destination
+ */
 void bmp24_saveImage(t_bmp24 *img, const char *filename);
 
 /* Effets de base */
+/* bmp24_negative
+ * Rôle : Inverse les couleurs de l'image
+ * Paramètre :
+ *   img - Image à modifier
+ * Calcul : nouvelle_couleur = 255 - couleur_originale
+ */
 void bmp24_negative(t_bmp24 *img);  // Inverse les couleurs
+/* bmp24_grayscale
+ * Rôle : Convertit en niveaux de gris
+ * Paramètre :
+ *   img - Image à convertir
+ * Méthode : Moyenne des composantes RGB
+ */
 void bmp24_grayscale(t_bmp24 *img); // Convertit en niveaux de gris
+/* bmp24_brightness
+ * Rôle : Ajuste la luminosité
+ * Paramètres :
+ *   img   - Image à modifier
+ *   value - Ajustement (-255 à +255)
+ */
 void bmp24_brightness(t_bmp24 *img, int value); // Ajuste la luminosité
 
 /* Effets avancés utilisant des filtres */
