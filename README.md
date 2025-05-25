@@ -25,13 +25,8 @@ L’outil se concentre sur la manipulation d’images au format **BMP** (8 bits 
 - Négatif
 - Ajustement de la luminosité
 - Noir et blanc (seuil)
-- Flou par boîte (*Box blur*)
-- Flou gaussien
-- Détection de contours (*Outline*)
-- Estampage (*Emboss*)
-- Netteté (*Sharpen*)
 - Égalisation d’histogramme (amélioration automatique du contraste)
-  - Compatible avec les images en niveaux de gris et en couleur (traitement via l’espace YUV pour les images couleur)
+- Compatible avec les images en niveaux de gris et en couleur (traitement via l’espace YUV pour les images couleur)
 
 ## Organisation du projet
 - `bmp8.c:` : Gestion des images BMP 8 bits et filtres associés
