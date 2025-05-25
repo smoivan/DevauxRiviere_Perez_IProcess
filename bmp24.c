@@ -201,13 +201,13 @@ void bmp24_writePixelData(t_bmp24 *image, FILE *file) {
 t_bmp24 *bmp24_loadImage(const char *filename) {
     FILE *file = fopen(filename, "rb");
 
-    // Check if the file exists
+
     if (file == NULL) {
         printf("Error while opening the file, the file does not exist!\n");
         return NULL;
     }
 
-    // Temporary structures
+
     t_bmp_header header;
     t_bmp_info header_info;
 
@@ -221,19 +221,17 @@ t_bmp24 *bmp24_loadImage(const char *filename) {
         return NULL;
     }
 
-    // Read dimensions and color depth
+
     int width = header_info.width;
     int height = header_info.height;
     int colorDepth = header_info.bits;
 
-    // Check color depth
     if (colorDepth != 24) {
-        printf("The image is not 24 bits deep");
+        printf("Cette image ne fait pas 24 bits");
         fclose(file);
         return NULL;
     }
 
-    // Allocate memory
     t_bmp24 *image = bmp24_allocate(width, height, colorDepth);
     if (image == NULL) {
         fclose(file);
