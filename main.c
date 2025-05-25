@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -70,7 +69,8 @@ static ErrorCode verifier_fichier(const char* nom_fichier) {
 }
 
 // Fonction de traitement
-static ErrorCode traiter_image(const char* nom_fichier, BmpType type) {
+static ErrorCode traiter_image(const char* nom_fichier, BmpType type)
+{
     int resultat;
     
     switch (type) {
@@ -103,34 +103,37 @@ static ErrorCode traiter_image(const char* nom_fichier, BmpType type) {
     default:
         return ERR_FORMAT;
     }
-
-int main(int argc, char *argv[]); {
-    // Vérification des arguments
-    if (argc != 3) {
-        fprintf(stderr, "Usage: %s <fichier_image%s> <type>\n", argv[0], EXTENSION);
-        fprintf(stderr, "type: %d pour BMP %d-bit ou %d pour BMP %d-bit\n", 
-                BMP_8BIT, BMP_8BIT, BMP_24BIT, BMP_24BIT);
-        return EXIT_FAILURE;
-    }
-
-    // Validation du type
-    if (!verifier_type(argv[2])) {
-        fprintf(stderr, "Type non valide. Utilisez %d ou %d\n", BMP_8BIT, BMP_24BIT);
-        return EXIT_FAILURE;
-    }
-    BmpType type = (BmpType)atoi(argv[2]);
-
-    // Vérification du fichier
-    ErrorCode err = verifier_fichier(argv[1]);
-    if (err != ERR_OK) {
-        return EXIT_FAILURE;
-    }
-
-    // Traitement de l'image
-    err = traiter_image(argv[1], type);
-    if (err != ERR_OK) {
-        return EXIT_FAILURE;
-    }
-
-    return EXIT_SUCCESS;
 }
+
+
+
+    int main(int argc, char *argv[]) {
+        // Vérification des arguments
+        if (argc != 3) {
+            fprintf(stderr, "Usage: %s <fichier_image%s> <type>\n", argv[0], EXTENSION);
+            fprintf(stderr, "type: %d pour BMP %d-bit ou %d pour BMP %d-bit\n",
+                    BMP_8BIT, BMP_8BIT, BMP_24BIT, BMP_24BIT);
+            return EXIT_FAILURE;
+        }
+
+        // Validation du type
+        if (!verifier_type(argv[2])) {
+            fprintf(stderr, "Type non valide. Utilisez %d ou %d\n", BMP_8BIT, BMP_24BIT);
+            return EXIT_FAILURE;
+        }
+        BmpType type = (BmpType)atoi(argv[2]);
+
+        // Vérification du fichier
+        ErrorCode err = verifier_fichier(argv[1]);
+        if (err != ERR_OK) {
+            return EXIT_FAILURE;
+        }
+
+        // Traitement de l'image
+        err = traiter_image(argv[1], type);
+        if (err != ERR_OK) {
+            return EXIT_FAILURE;
+        }
+
+        return EXIT_SUCCESS;
+    }
