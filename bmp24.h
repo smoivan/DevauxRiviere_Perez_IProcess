@@ -1,10 +1,11 @@
+
 #ifndef BMP24_H
 #define BMP24_H
 
 #include <stdio.h>
 #include <stdint.h>
 
-/* 
+/*
  * Positions des informations importantes dans le fichier BMP
  * Ces valeurs sont en hexadécimal et représentent des positions dans le fichier
  */

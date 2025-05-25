@@ -1,3 +1,4 @@
+
 #include "bmp24.h"
 #include <string.h>
 #include <stdlib.h>
@@ -104,33 +105,33 @@ void bmp24_brightness(t_bmp24 *img, int value);
  * Rôle : Applique différents effets à l'image
  * Paramètre :
  *   img - Image à modifier
- * Méthode : 
+ * Méthode :
  * 1. Crée la matrice appropriée
  * 2. Applique le filtre
  * 3. Libère la matrice
  */
 
-/* 
+/*
  * Applique un flou simple à l'image
  */
 void bmp24_boxBlur(t_bmp24 *img);
 
-/* 
+/*
  * Applique un flou plus doux (gaussien)
  */
 void bmp24_gaussianBlur(t_bmp24 *img);
 
-/* 
+/*
  * Fait ressortir les contours de l'image
  */
 void bmp24_outline(t_bmp24 *img);
 
-/* 
+/*
  * Donne un effet de relief à l'image
  */
 void bmp24_emboss(t_bmp24 *img);
 
-/* 
+/*
  * Rend l'image plus nette
  */
 void bmp24_sharpen(t_bmp24 *img);
@@ -139,7 +140,7 @@ void bmp24_sharpen(t_bmp24 *img);
  * Fonctions de gestion de la mémoire
  */
 
-/* 
+/*
  * Libère la mémoire utilisée par une image
  * À utiliser quand on n'a plus besoin de l'image
  */
@@ -329,7 +330,7 @@ void bmp24_writePixelData(t_bmp24 *image, FILE *file) {
 
 t_bmp24 *bmp24_loadImage(const char *filename) {
     FILE *file = fopen(filename, "rb");
-    
+
     // Check if the file exists
     if (file == NULL) {
         printf("Error while opening the file, the file does not exist!\n");
