@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "bmp8.h"
+#include "bmp8.c"
+#include "bmp8equalize.h"
+#include "bmp24equalize.c"
 
 // Constantes
 #define EXIT_SUCCESS 0
@@ -24,10 +28,8 @@ typedef enum {
 } BmpType;
 
 // Prototypes
-int lire_image8(const char* nom_fichier);
-int lire_image24(const char* nom_fichier);
-void bmp8equalize(void);
-void bmp24equalize(void);
+void bmp8_equalize(t_bmp8 *img);
+void bmp24_equalize(t_bmp24 *img);
 
 // Fonction de vérification du type
 static int verifier_type(const char* type_str) {
@@ -71,32 +73,37 @@ static ErrorCode traiter_image(const char* nom_fichier, BmpType type) {
     int resultat;
     
     switch (type) {
-        case BMP_8BIT:
-            resultat = lire_image8(nom_fichier);
-            if (resultat == 0) {
-                bmp8equalize();
+    case BMP_8BIT: {
+            t_bmp8 *image = bmp8_loadImage(nom_fichier);
+            if (image) {
+                bmp8_equalize(image);
+                bmp8_saveImage(image, "egalise.bmp");
+                bmp8_free(image);
                 printf("Égalisation de l'image 8 bits réussie\n");
                 return ERR_OK;
             }
             fprintf(stderr, "Échec du traitement de l'image 8 bits\n");
             return ERR_TRAITEMENT;
+    }
 
-        case BMP_24BIT:
-            resultat = lire_image24(nom_fichier);
-            if (resultat == 0) {
-                bmp24equalize();
+    case BMP_24BIT: {
+            t_bmp24 *image = bmp24_loadImage(nom_fichier);
+            if (image) {
+                bmp24_equalize(image);
+                bmp24_saveImage(image, "egalise.bmp");
+                bmp24_free(image);
                 printf("Égalisation de l'image 24 bits réussie\n");
                 return ERR_OK;
             }
             fprintf(stderr, "Échec du traitement de l'image 24 bits\n");
             return ERR_TRAITEMENT;
-
-        default:
-            return ERR_FORMAT;
     }
-}
 
-int main(int argc, char *argv[]) {
+    default:
+        return ERR_FORMAT;
+    }
+
+int main(int argc, char *argv[]); {
     // Vérification des arguments
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <fichier_image%s> <type>\n", argv[0], EXTENSION);
