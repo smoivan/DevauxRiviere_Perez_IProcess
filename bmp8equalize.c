@@ -1,3 +1,13 @@
+/**
+ * @file bmp8equalize.c
+ *
+ * @brief
+ * Ce fichier permet de rendre le contraste des images BMP 8 bits plus uniforme.
+ *
+ * @author [Ivan Pere]
+ * @date   [20/05/25]
+ */
+
 #include "bmp8equalize.h"
 #include <stdlib.h>
 #include <math.h>

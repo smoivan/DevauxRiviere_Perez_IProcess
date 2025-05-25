@@ -1,3 +1,14 @@
+/**
+ * @file bmp24.c
+ *
+ * @brief
+ * Ce fichier contient toutes les fonctions pour charger, enregistrer et
+ * modifier des images couleur BMP 24 bits: lecture, écriture, négatif,
+ * niveaux de gris, ajustement de luminosité et filtres (flou, contour, etc.).
+ *
+ * @author [Aurelien Devaux-Riviere]
+ * @date   [27/04/25]
+ */
 
 #include "bmp24.h"
 #include <string.h>

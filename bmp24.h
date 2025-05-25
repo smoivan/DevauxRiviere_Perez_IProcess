@@ -1,3 +1,17 @@
+/**
+ * @file bmp24.h
+ *
+ * @brief
+ * Définitions des structures et déclarations des fonctions pour
+ * la gestion et la modification des images BMP couleur 24 bits.
+ *
+ * Ce fichier centralise : les structures de données BMP, la manipulation
+ * mémoire, la lecture/écriture de pixels, les effets visuels de base
+ * et avancés.
+ *
+ * @author [Aurelien Devaux-Rivière]
+ * @date   [28/04/25]
+ */
 
 #ifndef BMP24_H
 #define BMP24_H

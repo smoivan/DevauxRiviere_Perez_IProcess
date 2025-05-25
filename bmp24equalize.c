@@ -1,3 +1,18 @@
+/**
+ * @file bmp24equalize.c
+ *
+ * @brief
+ * Implémente l'égalisation d'histogramme pour une image BMP couleur 24 bits.
+ * Fournit également les fonctions de conversion entre les espaces RGB et YUV.
+ *
+ * Algorithme: égalisation appliquée au canal Y (luminance) pour améliorer le
+ * contraste global tout en conservant les couleurs. Inclut la gestion mémoire
+ * et le clamp des valeurs pour garantir la validité des couleurs.
+ *
+ * Auteur : [Ivan Perez]
+ * Date   : [21/05/25]
+ */
+
 #include "bmp24equalize.h"
 #include <stdlib.h>
 #include <math.h>
