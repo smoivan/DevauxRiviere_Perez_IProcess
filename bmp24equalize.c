@@ -2,7 +2,18 @@
 #include <stdlib.h>
 #include <math.h>
 
-// Convertisseur de RGB vers YUV
+/* FONCTIONS DE CONVERSION COULEUR */
+
+/* rgb2yuv
+ * Rôle : Convertit une couleur de l'espace RGB vers YUV
+ * Paramètres :
+ *   R, G, B - Composantes RGB d'entrée (0-255)
+ *   Y, U, V - Pointeurs vers les composantes YUV résultantes
+ * Formules :
+ *   Y = 0.299R + 0.587G + 0.114B     (luminance)
+ *   U = -0.14713R - 0.28886G + 0.436B (chrominance bleue)
+ *   V = 0.615R - 0.51499G - 0.10001B  (chrominance rouge)
+ */
 static void rgb2yuv(uint8_t R, uint8_t G, uint8_t B,
                     float *Y, float *U, float *V)
 {
@@ -11,7 +22,17 @@ static void rgb2yuv(uint8_t R, uint8_t G, uint8_t B,
     *V =  0.615f * R - 0.51499f * G - 0.10001f * B;
 }
 
-// Conversion inverse : de YUV vers RGB
+/* yuv2rgb
+ * Rôle : Convertit une couleur de l'espace YUV vers RGB
+ * Paramètres :
+ *   Y, U, V - Composantes YUV d'entrée
+ *   R, G, B - Pointeurs vers les composantes RGB résultantes (0-255)
+ * Formules :
+ *   R = Y + 1.13983V
+ *   G = Y - 0.39465U - 0.58060V
+ *   B = Y + 2.03211U
+ * Note : Les valeurs sont automatiquement bornées entre 0 et 255
+ */
 static void yuv2rgb(float Y, float U, float V,
                     uint8_t *R, uint8_t *G, uint8_t *B)
 {
@@ -25,7 +46,39 @@ static void yuv2rgb(float Y, float U, float V,
     *B = (uint8_t)(b < 0 ? 0 : (b > 255 ? 255 : b));
 }
 
-// Fonction pour égaliser l'histogramme d'une image BMP 24 bits
+/* FONCTION PRINCIPALE D'ÉGALISATION */
+
+/* bmp24_equalize
+ * Rôle : Égalise l'histogramme d'une image couleur
+ * Paramètre :
+ *   img - Image à traiter
+ * Processus en 4 étapes :
+ * 
+ * 1. Construction de l'histogramme
+ *    - Conversion RGB→YUV pour chaque pixel
+ *    - Comptage des occurrences de Y (luminance)
+ *    - Tableau hist[256] contenant les fréquences
+ *
+ * 2. Calcul de la fonction de répartition (CDF)
+ *    - Somme cumulée de l'histogramme
+ *    - Recherche du premier niveau non nul (cdf_min)
+ *
+ * 3. Création de la table de correspondance
+ *    - Pour chaque niveau i :
+ *      map[i] = ((cdf[i] - cdf_min)/(N - cdf_min)) * 255
+ *    - N = nombre total de pixels
+ *
+ * 4. Application de la transformation
+ *    - Pour chaque pixel :
+ *      - Conversion RGB→YUV
+ *      - Remplacement de Y par sa valeur égalisée
+ *      - Conversion YUV→RGB
+ *
+ * Gestion mémoire :
+ *   - Allocation dynamique pour hist[] et cdf[]
+ *   - Libération en fin de fonction
+ *   - Vérification des allocations
+ */
 void bmp24_equalize(t_bmp24 *img) {
     if (!img || !img->data) return;
 

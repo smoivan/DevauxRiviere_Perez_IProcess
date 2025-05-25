@@ -1,30 +1,45 @@
 #include "bmp24.h"
 #include <string.h>
 
-/*
- * Fonctions pour lire et écrire dans un fichier
+/* FONCTIONS DE BASE FICHIER */
+
+/* file_rawRead
+ * Rôle : Lit des données dans un fichier à une position spécifique
+ * Paramètres :
+ *   position - Position dans le fichier où commencer la lecture
+ *   buffer   - Pointeur vers la zone mémoire où stocker les données
+ *   size     - Taille d'un élément à lire
+ *   n        - Nombre d'éléments à lire
+ *   file     - Pointeur vers le fichier source
  */
-/* Lit des données depuis un fichier à une position précise */
 void file_rawRead(uint32_t position, void *buffer, uint32_t size, size_t n, FILE *file);
 
-/* Écrit des données dans un fichier à une position précise */
+/* file_rawWrite
+ * Rôle : Écrit des données dans un fichier à une position spécifique
+ * Paramètres : Identiques à file_rawRead mais pour l'écriture
+ */
 void file_rawWrite(uint32_t position, void *buffer, uint32_t size, size_t n, FILE *file);
 
 /*
  * Fonctions pour gérer les images couleur (24 bits)
  */
 
-/* 
- * Charge une image depuis un fichier
- * Renvoie : l'image chargée ou NULL si erreur
+/* FONCTIONS PRINCIPALES */
+
+/* bmp24_loadImage
+ * Rôle : Charge une image BMP 24 bits
+ * Paramètre :
+ *   filename - Chemin du fichier à charger
+ * Retour : Structure image ou NULL si erreur
+ * Vérifie : Format 24 bits, existence fichier
  */
 t_bmp24 *bmp24_loadImage(const char *filename);
 
-/* 
- * Sauvegarde une image dans un fichier
+/* bmp24_saveImage
+ * Rôle : Sauvegarde une image en BMP
  * Paramètres :
- * - img : l'image à sauvegarder
- * - filename : nom du fichier où sauvegarder
+ *   img      - Image à sauvegarder
+ *   filename - Nom du fichier destination
  */
 void bmp24_saveImage(t_bmp24 *img, const char *filename);
 
@@ -32,25 +47,66 @@ void bmp24_saveImage(t_bmp24 *img, const char *filename);
  * Effets de base sur les images
  */
 
-/* 
- * Inverse les couleurs de l'image 
- * (comme un négatif photo)
+/* EFFETS BASIQUES */
+
+/* bmp24_negative
+ * Rôle : Inverse les couleurs de l'image
+ * Paramètre :
+ *   img - Image à modifier
+ * Calcul : nouvelle_couleur = 255 - couleur_originale
  */
 void bmp24_negative(t_bmp24 *img);
 
-/* 
- * Convertit l'image en niveaux de gris
+/* bmp24_grayscale
+ * Rôle : Convertit en niveaux de gris
+ * Paramètre :
+ *   img - Image à convertir
+ * Méthode : Moyenne des composantes RGB
  */
 void bmp24_grayscale(t_bmp24 *img);
 
-/* 
- * Change la luminosité de l'image
- * value : positif pour éclaircir, négatif pour assombrir
+/* bmp24_brightness
+ * Rôle : Ajuste la luminosité
+ * Paramètres :
+ *   img   - Image à modifier
+ *   value - Ajustement (-255 à +255)
  */
 void bmp24_brightness(t_bmp24 *img, int value);
 
 /*
  * Effets de flou et filtres
+ */
+
+/* FILTRES PAR CONVOLUTION */
+
+/* bmp24_convolution
+ * Rôle : Applique une matrice de convolution à un pixel
+ * Paramètres :
+ *   img        - Image source
+ *   x, y       - Position du pixel
+ *   kernel     - Matrice de convolution
+ *   kernelSize - Taille de la matrice
+ * Retour : Nouveau pixel calculé
+ */
+
+/* CRÉATION DE FILTRES */
+
+/* create_X_kernel (box_blur, gaussian_blur, outline, emboss, sharpen)
+ * Rôle : Crée une matrice 3x3 pour différents effets
+ * Retour : Matrice allouée dynamiquement
+ * Note : Doit être libérée avec free_kernel
+ */
+
+/* FONCTIONS D'EFFETS */
+
+/* bmp24_boxBlur, gaussianBlur, outline, emboss, sharpen
+ * Rôle : Applique différents effets à l'image
+ * Paramètre :
+ *   img - Image à modifier
+ * Méthode : 
+ * 1. Crée la matrice appropriée
+ * 2. Applique le filtre
+ * 3. Libère la matrice
  */
 
 /* 
@@ -106,11 +162,15 @@ void file_rawWrite(uint32_t position, void *buffer, uint32_t size, size_t n, FIL
 }
 
 
+/* FONCTIONS DE GESTION MÉMOIRE */
 
-
-
-
-
+/* bmp24_allocateDataPixels
+ * Rôle : Alloue un tableau 2D pour stocker les pixels
+ * Paramètres :
+ *   width  - Largeur de l'image
+ *   height - Hauteur de l'image
+ * Retour : Tableau 2D de pixels ou NULL si erreur
+ */
 t_pixel **bmp24_allocateDataPixels(int width, int height) {
     t_pixel **pixels = (t_pixel **)malloc(height * sizeof(t_pixel *));
     if (pixels == NULL) {
@@ -133,6 +193,12 @@ t_pixel **bmp24_allocateDataPixels(int width, int height) {
     return pixels;
 }
 
+/* bmp24_freeDataPixels
+ * Rôle : Libère la mémoire d'un tableau de pixels
+ * Paramètres :
+ *   pixels - Tableau à libérer
+ *   height - Nombre de lignes du tableau
+ */
 void bmp24_freeDataPixels(t_pixel **pixels, int height) {
     if (pixels == NULL) {
         return;
@@ -190,9 +256,16 @@ void bmp24_free(t_bmp24 *img) {
 }
 
 
+/* FONCTIONS DE LECTURE/ÉCRITURE PIXELS */
 
-
-
+/* bmp24_readPixelValue
+ * Rôle : Lit un pixel depuis le fichier BMP
+ * Paramètres :
+ *   image - Image en cours de lecture
+ *   x, y  - Coordonnées du pixel
+ *   file  - Fichier source
+ * Note : Gère l'inversion verticale du format BMP
+ */
 void bmp24_readPixelValue(t_bmp24 *image, int x, int y, FILE *file) {
 
     uint32_t position = image->header.offset + ((image->height - 1 - y) * image->width + x) * 3;
@@ -220,8 +293,10 @@ void bmp24_readPixelData(t_bmp24 *image, FILE *file) {
 }
 
 
-
-
+/* bmp24_writePixelValue
+ * Rôle : Écrit un pixel dans le fichier BMP
+ * Paramètres : Similaires à readPixelValue mais pour l'écriture
+ */
 void bmp24_writePixelValue(t_bmp24 *image, int x, int y, FILE *file) {
 
     uint32_t position = image->header.offset + ((image->height - 1 - y) * image->width + x) * 3;
