@@ -1,43 +1,41 @@
-# Probleme lors de la création du Github classroom. Tout le projet en C sera effectué ici pour le moment
+# Projet de traitement d’images BMP
 
+**Auteurs : Ivan Perez & Aurelien Devaux-Rivière**
 
-
-
-
-
-
-# P1 - TI202 : Image processing en C
+---
 
 ## Présentation
 
-Ce projet, porte sur le traitement d'images au format BMP en langage C.
-L'objectif est d'apprendre à manipuler des fichiers binaires, traiter des images en niveaux de gris (8 bits) et en couleur (24 bits), et appliquer des transformations et des filtres avancés (convolutions, égalisation d'histogramme).
+Ce projet est une application complète de traitement d’images écrite en langage C.  
+Elle propose deux interfaces:
+- Une interface en ligne de commande (CLI)
+- Une interface graphique (GUI) basée sur GTK3
+
+L’outil se concentre sur la manipulation d’images au format **BMP** (8 bits en niveaux de gris et 24 bits en couleur).
 
 ---
 
-## Auteurs
+## Fonctionnalités
 
-- **Ivan Perez**
-- **Aurélien Devaux-Riviere**
+- **Prise en charge des images BMP 8 bits et 24 bits**
+- **Charger et sauvegarder** des images BMP (noir et blanc ou couleur)
+- **Afficher les informations** de l’image (dimensions, profondeur, etc.)
 
----
+#### Filtres et traitements disponibles :
+- Négatif
+- Ajustement de la luminosité
+- Noir et blanc (seuil)
+- Flou par boîte (*Box blur*)
+- Flou gaussien
+- Détection de contours (*Outline*)
+- Estampage (*Emboss*)
+- Netteté (*Sharpen*)
+- Égalisation d’histogramme (amélioration automatique du contraste)
+  - Compatible avec les images en niveaux de gris et en couleur (traitement via l’espace YUV pour les images couleur)
 
 ## Organisation du projet
-
-Le projet est divisé en trois parties :
-
-- **Partie 1 :** Traitement d'images en niveaux de gris (8 bits)
-- **Partie 2 :** Gestion et traitement d'images en couleur (24 bits)
-- **Partie 3 :** Égalisation d'histogramme pour améliorer le contraste
-
----
-
-## Fonctionnalités principales
-
-- Chargement et sauvegarde d'images BMP (8 bits et 24 bits)
-- Application de filtres :
-  - Négatif
-  - Ajustement de la luminosité
-  - Binarisation
-
-
+- `bmp8.c:` : Gestion des images BMP 8 bits et filtres associés
+- `bmp24.c` : Gestion des images BMP 24 bits et filtres associés
+- `bmp24.h` : Structures et prototypes pour la manipulation d’images BMP (lecture, écriture, effets, filtres, gestion mémoire…)
+- `bmp24equalize.h` : Déclaration de la fonction d’égalisation d’histogramme.
+- `bmp24equalize.c` : Implémentation de l’égalisation d’histogramme (et conversions RGB <-> YUV).
