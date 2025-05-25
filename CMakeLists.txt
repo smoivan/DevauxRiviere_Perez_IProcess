@@ -7,8 +7,8 @@ add_executable(traitement_image
         main.c
         bmp8.c
         bmp24.c
-        equalize8.c
-        equalize24.c
+        bmp8equalize.c
+        bmp24equalize.c
 )
 
 target_link_libraries(traitement_image m)

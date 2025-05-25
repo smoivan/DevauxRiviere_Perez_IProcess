@@ -1,5 +1,5 @@
-#ifndef EQUALIZE24_H
-#define EQUALIZE24_H
+#ifndef BMP24EQUALIZE_H
+#define BMP24EQUALIZE_H
 
 #include "bmp24.h"
 
@@ -7,4 +7,4 @@
 // Cela améliore le contraste tout en préservant les couleurs.
 void bmp24_equalize(t_bmp24 *img);
 
-#endif // EQUALIZE24_H
+#endif // BMP24EQUALIZE_H

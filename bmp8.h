@@ -52,7 +52,7 @@ void bmp8_free(t_bmp8 *img);
  * Paramètre :
  *   img - Image dont on veut voir les infos
  */
-void bmp8_printInfo(const t_bmp8 *img);
+void bmp8_printInfo(t_bmp8 *img);
 
 /*
  * Inverse les couleurs de l'image (effet négatif)

@@ -1,4 +1,4 @@
-#include "bmpequalize24.h"
+#include "bmp24equalize.h"
 #include <stdlib.h>
 #include <math.h>
 

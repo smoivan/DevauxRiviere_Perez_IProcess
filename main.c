@@ -5,8 +5,8 @@
 // Déclaration des prototypes des fonctions (qui devraient être dans des headers)
 int lire_image8(const char* nom_fichier);  // pour bmp8.c
 int lire_image24(const char* nom_fichier); // pour bmp24.c
-void equalizer8(void);                     // pour equalize8.c
-void equalizer24(void);                    // pour equalize24.c
+void bmp8equalize(void);                     // pour equalize8.c
+void bmp24equalize(void);                    // pour equalize24.c
 
 int main(int argc, char *argv[]) {
     if (argc != 3) {
@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
             // Traitement pour image 8-bit
             resultat = lire_image8(nom_fichier);
             if (resultat == 0) {
-                equalizer8();
+                bmp8equalize();
                 printf("Traitement de l'image 8-bit réussi\n");
             } else {
                 printf("Erreur lors du traitement de l'image 8-bit\n");
@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
             // Traitement pour image 24-bit
             resultat = lire_image24(nom_fichier);
             if (resultat == 0) {
-                equalizer24();
+                bmp8equalize();
                 printf("Traitement de l'image 24-bit réussi\n");
             } else {
                 printf("Erreur lors du traitement de l'image 24-bit\n");
