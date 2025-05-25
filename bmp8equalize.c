@@ -3,7 +3,20 @@
 #include <math.h>
 #include <stdio.h>
 
-// Étape 1 : Cette fonction nous aide à calculer l'histogramme des images en niveaux de gris
+/*
+ * Compte combien de fois chaque niveau de gris apparaît dans l'image
+ *
+ * Ce qu'elle fait :
+ * - Crée un tableau de 256 cases (une pour chaque niveau de gris)
+ * - Compte combien de fois on trouve chaque niveau de gris dans l'image
+ * 
+ * Paramètre :
+ * - img : l'image à analyser
+ * 
+ * Renvoie :
+ * - Un tableau avec les comptages
+ * - NULL si erreur
+ */
 unsigned int *bmp8_computeHistogram(t_bmp8 *img) {
     // Vérification des paramètres d'entrée
     if (!img || !img->data) return NULL;
@@ -20,7 +33,22 @@ unsigned int *bmp8_computeHistogram(t_bmp8 *img) {
     return hist;
 }
 
-// Étape 2 : Cette fonction nous aide à calculer la fonction de répartition cumulée (CDF)
+/*
+ * Calcule comment mieux répartir les niveaux de gris
+ *
+ * Ce qu'elle fait :
+ * - Prend l'histogramme en entrée
+ * - Calcule les sommes cumulées
+ * - Ajuste les valeurs pour avoir une meilleure répartition
+ * 
+ * Paramètres :
+ * - hist : l'histogramme calculé précédemment
+ * - nombre_pixels_total : nombre total de pixels dans l'image
+ * 
+ * Renvoie :
+ * - Un tableau avec les nouvelles valeurs pour chaque niveau
+ * - NULL si erreur
+ */
 unsigned int *bmp8_computeCDF(unsigned int *hist, unsigned int nombre_pixels_total) {
     // Vérification des paramètres d'entrée
     if (!hist || nombre_pixels_total == 0) return NULL;
@@ -52,7 +80,19 @@ unsigned int *bmp8_computeCDF(unsigned int *hist, unsigned int nombre_pixels_tot
     return cdf;
 }
 
-// Étape 3 : Application de l'égalisation à l'image choisie
+/*
+ * Améliore le contraste de l'image
+ *
+ * Ce qu'elle fait :
+ * - Analyse la répartition des niveaux de gris
+ * - Recalcule de nouvelles valeurs pour mieux utiliser tous les niveaux
+ * - Applique ces changements à l'image
+ * 
+ * L'image aura un meilleur contraste après cette opération
+ * 
+ * Paramètre :
+ * - img : l'image à modifier
+ */
 void bmp8_equalize(t_bmp8 *img) {
     // Vérification des paramètres d'entrée
     if (!img || !img->data) return;
