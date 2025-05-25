@@ -58,42 +58,31 @@ unsigned int *bmp8_computeCDF(unsigned int *hist, unsigned int nombre_pixels_tot
 
     // Normalisation avec vérification de dépassement
     for (int i = 0; i < 256; i++) {
-        double normalized = ((double)(cdf[i] - cdf_min) / 
+        double normalized = ((double)(cdf[i] - cdf_min) /
                            (double)(nombre_pixels_total - cdf_min)) * 255.0;
-        cdf[i] = (unsigned int)round(normalized < 0 ? 0 : 
+        cdf[i] = (unsigned int)round(normalized < 0 ? 0 :
                                    (normalized > 255 ? 255 : normalized));
     }
 
     return cdf;
 }
 
-void bmp8_equalize(t_bmp8 *img) {
-    if (!img || !img->data) {
-        fprintf(stderr, "Image invalide\n");
-        return;
-    }
 
-    // Calcul histogramme
+
+void bmp8_equalize(t_bmp8 *img) {
+    if (!img || !img->data) return;
+
     unsigned int *hist = bmp8_computeHistogram(img);
     if (!hist) return;
 
-    // Calcul nombre réel de pixels (sans padding)
-    unsigned int real_size = img->width * img->height;
-    unsigned int *cdf = bmp8_computeCDF(hist, real_size);
+    unsigned int *cdf = bmp8_computeCDF(hist, img->width * img->height);
     if (!cdf) {
         free(hist);
         return;
     }
 
-    // Application avec gestion du padding
-    int padding = (4 - (img->width % 4)) % 4;
-    int rowSize = img->width + padding;
-
-    for (unsigned int y = 0; y < img->height; y++) {
-        for (unsigned int x = 0; x < img->width; x++) {
-            unsigned int pos = y * rowSize + x;
-            img->data[pos] = (unsigned char)cdf[img->data[pos]];
-        }
+    for (unsigned int i = 0; i < img->dataSize; i++) {
+        img->data[i] = (unsigned char)cdf[img->data[i]];
     }
 
     free(hist);

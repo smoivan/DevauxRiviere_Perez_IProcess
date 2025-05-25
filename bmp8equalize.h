@@ -26,6 +26,6 @@ unsigned int *bmp8_computeCDF(unsigned int *hist, unsigned int total_pixels);
  * - Calculer les meilleures valeurs
  * - Appliquer les modifications
  */
-void bmp8_equalize(t_bmp8 *img);
+void    bmp8_equalize(t_bmp8 *img);
 
 #endif // EQUALIZE8_H
