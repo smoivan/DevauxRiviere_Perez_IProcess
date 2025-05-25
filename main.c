@@ -79,10 +79,10 @@ static ErrorCode traiter_image(const char* nom_fichier, BmpType type)
     case BMP_8BIT: {
             t_bmp8 *image = bmp8_loadImage(nom_fichier);
             if (image) {
-                bmp8_equalize(image);
-                bmp8_saveImage("egalise.bmp", image);
+                bmp8_negative(image);
+                bmp8_saveImage("negative.bmp", image);
                 bmp8_free(image);
-                printf("egalisation de l'image 8 bits reussie\n");
+                printf("negation de l'image 8 bits reussie\n");
                 return ERR_OK;
             }
             fprintf(stderr, "Échec du traitement de l'image 8 bits\n");
