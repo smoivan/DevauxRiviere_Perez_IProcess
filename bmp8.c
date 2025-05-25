@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "bmp8.h"
 
+
 /*
  * Charge une image en noir et blanc (format BMP 8 bits)
  * 
