@@ -3,9 +3,10 @@
 #include <string.h>
 #include <ctype.h>
 #include "bmp8.h"
-#include "bmp8.c"
 #include "bmp8equalize.h"
-#include "bmp24equalize.c"
+#include "bmp24equalize.h"
+#include "bmp24.h"
+#include <errno.h>
 
 // Constantes
 #define EXIT_SUCCESS 0
@@ -60,6 +61,7 @@ static ErrorCode verifier_fichier(const char* nom_fichier) {
     
     FILE* test = fopen(nom_fichier, "rb");
     if (!test) {
+        fprintf(stderr, "errno value: %d\n", errno);
         perror("Erreur d'ouverture du fichier");
         return ERR_LECTURE;
     }
@@ -78,9 +80,9 @@ static ErrorCode traiter_image(const char* nom_fichier, BmpType type)
             t_bmp8 *image = bmp8_loadImage(nom_fichier);
             if (image) {
                 bmp8_equalize(image);
-                bmp8_saveImage(image, "egalise.bmp");
+                bmp8_saveImage("egalise.bmp", image);
                 bmp8_free(image);
-                printf("Égalisation de l'image 8 bits réussie\n");
+                printf("egalisation de l'image 8 bits reussie\n");
                 return ERR_OK;
             }
             fprintf(stderr, "Échec du traitement de l'image 8 bits\n");
