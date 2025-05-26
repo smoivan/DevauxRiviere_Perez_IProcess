@@ -203,7 +203,7 @@ t_bmp24 *bmp24_loadImage(const char *filename) {
 
 
     if (file == NULL) {
-        printf("Error while opening the file, the file does not exist!\n");
+        printf("Erreur lors de l'ouverture du fichier!\n");
         return NULL;
     }
 

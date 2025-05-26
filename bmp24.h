@@ -36,34 +36,37 @@
 #define INFO_SIZE 0x28      // Taille des informations supplémentaires
 #define DEFAULT_DEPTH 0x18  // 24 bits par défaut (8 bits par couleur)
 
+
+#pragma pack(push, 1) // 🔧 Désactive l’alignement automatique
 /*
  * Structure de l'en-tête principal du fichier BMP
  */
 typedef struct {
-    uint16_t type;      // Type de fichier (doit être BMP_TYPE)
-    uint32_t size;      // Taille totale du fichier
-    uint16_t reserved1; // Réservé
-    uint16_t reserved2; // Réservé
-    uint32_t offset;    // Position des données de l'image
+    uint16_t type;
+    uint32_t size;
+    uint16_t reserved1;
+    uint16_t reserved2;
+    uint32_t offset;
 } t_bmp_header;
 
 /*
  * Informations détaillées sur l'image
  */
 typedef struct {
-    uint32_t size;            // Taille de cette structure
-    int32_t width;           // Largeur en pixels
-    int32_t height;          // Hauteur en pixels
-    uint16_t planes;         // Toujours 1
-    uint16_t bits;           // Bits par pixel (24 ici)
-    uint32_t compression;    // Type de compression (0 = aucune)
-    uint32_t imagesize;      // Taille des données de l'image
-    int32_t xresolution;    // Résolution horizontale
-    int32_t yresolution;    // Résolution verticale
-    uint32_t ncolors;       // Nombre de couleurs
-    uint32_t importantcolors; // Nombre de couleurs importantes
+    uint32_t size;             // Taille de cette structure (40 octets)
+    int32_t width;
+    int32_t height;// Hauteur en pixels
+    uint16_t planes;// Toujours 1
+    uint16_t bits;             // Doit être 24
+    uint32_t compression;
+    uint32_t imageSize;
+    int32_t xPixelsPerMeter;
+    int32_t yPixelsPerMeter;
+    uint32_t colorsUsed;
+    uint32_t importantColors; // Nombre de couleurs importantes
 } t_bmp_info;
 
+#pragma pack(pop)
 /*
  * Structure représentant un pixel en couleur (RGB)
  */
@@ -167,3 +170,5 @@ void bmp24_emboss(t_bmp24 *img);         // Effet de relief
 void bmp24_sharpen(t_bmp24 *img);       // Augmente la netteté
 
 #endif
+
+
